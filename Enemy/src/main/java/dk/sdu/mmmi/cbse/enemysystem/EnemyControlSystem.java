@@ -14,25 +14,30 @@ import static java.util.stream.Collectors.toList;
 
 public class EnemyControlSystem implements IEntityProcessingService {
     private Random random = new Random();
+    EnemyPlugin plugin = new EnemyPlugin();
 
     @Override
     public void process(GameData gameData, World world) {
+        if (world.getEntities(Enemy.class).isEmpty()) {
+            Entity newEnemy = plugin.createEnemyship(gameData);
+            world.addEntity(newEnemy);
+        }
         double randomized = random.nextDouble(0,1);
 
         for (Entity enemy : world.getEntities(Enemy.class)) {
             if (randomized > 0.75) {
                 enemy.setRotation(enemy.getRotation() - 5);
             }
-            if (randomized <= 0.75 && randomized > 0.50)  {
+            if (randomized <= 0.75 && randomized > 0.5)  {
                 enemy.setRotation(enemy.getRotation() + 5);
             }
-            if (randomized <= 0.50 && randomized > 0.25)  {
+            if (randomized > 0.2)  {
                 double changeX = Math.cos(Math.toRadians(enemy.getRotation()));
                 double changeY = Math.sin(Math.toRadians(enemy.getRotation()));
                 enemy.setX(enemy.getX() + changeX);
                 enemy.setY(enemy.getY() + changeY);
             }
-            if (randomized <= 0.25 && randomized >= 0)  {
+            if (randomized <= 0.2 && randomized > 0)  {
                 getBulletSPIs().stream().findFirst().ifPresent(
                         spi -> {world.addEntity(spi.createBullet(enemy, gameData));}
                 );
