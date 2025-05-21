@@ -1,17 +1,23 @@
 package dk.sdu.mmmi.cbse.collisionsystem;
 
+import dk.sdu.mmmi.cbse.common.asteroids.Asteroid;
+import dk.sdu.mmmi.cbse.common.asteroids.IAsteroidSplitter;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import java.util.ServiceLoader;
 
 public class CollisionDetector implements IPostEntityProcessingService {
+    IAsteroidSplitter asteroidSplitter;
 
     public CollisionDetector() {
     }
 
     @Override
     public void process(GameData gameData, World world) {
+        asteroidSplitter = getAsteroidSplitter();
+
         // two for loops for all entities in the world
         for (Entity entity1 : world.getEntities()) {
             for (Entity entity2 : world.getEntities()) {
@@ -25,6 +31,15 @@ public class CollisionDetector implements IPostEntityProcessingService {
                 if (this.collides(entity1, entity2)) {
                     world.removeEntity(entity1);
                     world.removeEntity(entity2);
+                    if (asteroidSplitter != null) {
+                        if (entity1 instanceof Asteroid) {
+                            asteroidSplitter.createSplitAsteroid(entity1, world);
+                        } else if (entity2 instanceof Asteroid) {
+                            asteroidSplitter.createSplitAsteroid(entity2, world);
+                        }
+                    } else {
+                        System.out.println("The service AsteroidSplitter was not found");
+                    }
                 }
             }
         }
@@ -38,4 +53,7 @@ public class CollisionDetector implements IPostEntityProcessingService {
         return distance < (entity1.getRadius() + entity2.getRadius());
     }
 
+    public IAsteroidSplitter getAsteroidSplitter() {
+        return ServiceLoader.load(IAsteroidSplitter.class).stream().map(ServiceLoader.Provider::get).findFirst().orElse(null);
+    }
 }

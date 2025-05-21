@@ -38,4 +38,21 @@ public class AsteroidPlugin implements IGamePluginService {
         asteroid.setRotation(rnd.nextInt(90));
         return asteroid;
     }
+
+    public Entity createSmallerAsteroid(Entity a, boolean firstHalf) {
+        Entity asteroid = new Asteroid();
+        int size = (int) (a.getRadius()/2);
+        asteroid.setPolygonCoordinates(size, -size, -size, -size, -size, size, size, size);
+        asteroid.setRadius(size);
+        if (firstHalf) {
+            asteroid.setX(a.getX()+size);
+            asteroid.setY(a.getY()+size);
+            asteroid.setRotation(a.getRotation()*1.5);
+        } else {
+            asteroid.setX(a.getX()-size);
+            asteroid.setY(a.getY()-size);
+            asteroid.setRotation(a.getRotation()*-1.5);
+        }
+        return asteroid;
+    }
 }
