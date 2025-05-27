@@ -8,25 +8,21 @@
         <artifactId>asteroids.jpms</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>Enemy</artifactId>
-    <packaging>jar</packaging>
-    <name>Enemy</name>
+
+    <artifactId>CommonPlayer</artifactId>
+
+    <properties>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>CommonBullet</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>dk.sdu.mmmi.cbse</groupId>
-            <artifactId>CommonEnemy</artifactId>
+            <artifactId>Common</artifactId>
             <version>1.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
 </project>
