@@ -4,15 +4,14 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
-import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
-import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
+import dk.sdu.mmmi.cbse.common.services.*;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import static java.util.stream.Collectors.toList;
-import dk.sdu.mmmi.cbse.common.services.ISoundService;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -29,6 +28,7 @@ public class Main extends Application {
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
     private ISoundService soundService;
+    private IGUISkinService skinService;
 
     public static void main(String[] args) {
         launch(Main.class);
@@ -37,6 +37,8 @@ public class Main extends Application {
     @Override
     public void start(Stage window) throws Exception {
         soundService = getSoundService();
+        skinService = getSkinService();
+
         Text text = new Text(10, 20, "Destroyed asteroids: 0");
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
         gameWindow.getChildren().add(text);
@@ -112,25 +114,34 @@ public class Main extends Application {
         }       
     }
 
-    private void draw() {        
+    private void draw() {
         for (Entity polygonEntity : polygons.keySet()) {
-            if(!world.getEntities().contains(polygonEntity)){   
-                Polygon removedPolygon = polygons.get(polygonEntity);               
+            if(!world.getEntities().contains(polygonEntity)){
+                Polygon removedPolygon = polygons.get(polygonEntity);
                 polygons.remove(polygonEntity);                      
                 gameWindow.getChildren().remove(removedPolygon);
+
+                if (skinService != null) {
+                    skinService.removeImages(polygonEntity);
+                }
             }
         }
-                
-        for (Entity entity : world.getEntities()) {                      
-            Polygon polygon = polygons.get(entity);
-            if (polygon == null) {
-                polygon = new Polygon(entity.getPolygonCoordinates());
-                polygons.put(entity, polygon);
-                gameWindow.getChildren().add(polygon);
+
+        for (Entity entity : world.getEntities()) {
+            if (skinService != null) {
+                skinService.setupPane(gameWindow);
+                skinService.renderImages(entity);
+            } else {
+                Polygon polygon = polygons.get(entity);
+                if (polygon == null) {
+                    polygon = new Polygon(entity.getPolygonCoordinates());
+                    polygons.put(entity, polygon);
+                    gameWindow.getChildren().add(polygon);
+                }
+                polygon.setTranslateX(entity.getX());
+                polygon.setTranslateY(entity.getY());
+                polygon.setRotate(entity.getRotation());
             }
-            polygon.setTranslateX(entity.getX());
-            polygon.setTranslateY(entity.getY());
-            polygon.setRotate(entity.getRotation());
         }
 
     }
@@ -149,5 +160,9 @@ public class Main extends Application {
 
     public ISoundService getSoundService() {
         return ServiceLoader.load(ISoundService.class).stream().map(ServiceLoader.Provider::get).findFirst().orElse(null);
+    }
+
+    public IGUISkinService getSkinService() {
+        return ServiceLoader.load(IGUISkinService.class).stream().map(ServiceLoader.Provider::get).findFirst().orElse(null);
     }
 }

@@ -23,6 +23,7 @@
         <module>Sound</module>
         <module>CommonPlayer</module>
         <module>CommonEnemy</module>
+        <module>Skin</module>
     </modules>
     <properties>
         <java>java</java>

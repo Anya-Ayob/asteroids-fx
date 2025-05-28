@@ -1,3 +1,4 @@
+import dk.sdu.mmmi.cbse.common.services.IGUISkinService;
 import dk.sdu.mmmi.cbse.common.services.ISoundService;
 
 module Core {
@@ -9,6 +10,7 @@ module Core {
     uses dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
     uses dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
     uses ISoundService;
+    uses IGUISkinService;
 }
 
 
