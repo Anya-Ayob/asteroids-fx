@@ -6,17 +6,23 @@ import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import java.util.Random;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author corfixen
  */
 public class AsteroidPlugin implements IGamePluginService {
+    private final ScheduledExecutorService sheduler = new ScheduledThreadPoolExecutor(1);
 
     @Override
     public void start(GameData gameData, World world) {
-        Entity asteroid = createAsteroid(gameData);
-        world.addEntity(asteroid);
+        sheduler.scheduleAtFixedRate(() -> {
+            Entity asteroid = createAsteroid(gameData);
+            world.addEntity(asteroid);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 
     @Override

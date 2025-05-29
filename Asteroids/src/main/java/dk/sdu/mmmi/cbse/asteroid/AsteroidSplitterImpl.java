@@ -15,7 +15,7 @@ public class AsteroidSplitterImpl implements IAsteroidSplitter {
     @Override
     public void createSplitAsteroid(Entity e, World world) {
         if (e instanceof Asteroid) {
-            if (e.getRadius() >= 5) {
+            if (e.getRadius() >= 7) {
                 Entity asteroid1 = asteroidPlugin.createSmallerAsteroid(e, true);
                 Entity asteroid2 = asteroidPlugin.createSmallerAsteroid(e, false);
                 world.addEntity(asteroid1);
