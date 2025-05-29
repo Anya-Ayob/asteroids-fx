@@ -11,7 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ImageRender implements IGUISkinService {
 
@@ -53,7 +55,6 @@ public class ImageRender implements IGUISkinService {
         registerImages(Bullet.class, "images/bullet.png");
         registerImages(Enemy.class, "images/enemyship.png");
         registerImages(Player.class, "images/playership.png");
-        initialized = true;
 
         //setting up the pane background :)
         String backgroundPath = "images/asteroidsbackground.gif";
@@ -65,6 +66,7 @@ public class ImageRender implements IGUISkinService {
                 BackgroundSize.DEFAULT);
 
         pane.setBackground(new Background(backgroundImage));
+        initialized = true;
     }
 
     public void registerImages(Class<? extends Entity> entityType, String filepath){
@@ -76,10 +78,15 @@ public class ImageRender implements IGUISkinService {
     }
 
     @Override
-    public void removeImages(Entity entity) {
-        ImageView imageView = imageViews.remove(entity.getID());
+    public void removeImages(String id) {
+        ImageView imageView = imageViews.remove(id);
         if (imageView != null && pane != null) {
             pane.getChildren().remove(imageView);
         }
+    }
+
+    @Override
+    public Set<String> getActiveEntitiesID() {
+        return new HashSet<>(imageViews.keySet());
     }
 }

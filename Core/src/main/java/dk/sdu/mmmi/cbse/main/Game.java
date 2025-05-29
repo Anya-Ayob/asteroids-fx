@@ -6,11 +6,10 @@ import dk.sdu.mmmi.cbse.common.data.GameKeys;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 
 import javafx.animation.AnimationTimer;
@@ -126,10 +125,16 @@ public class Game extends Application {
                 Polygon removedPolygon = polygons.get(polygonEntity);
                 polygons.remove(polygonEntity);
                 gameWindow.getChildren().remove(removedPolygon);
+            }
+        }
+        //deleting the imageViews
+        if (skinService != null) {
+            Set<String> currentEntityIds = world.getEntities().stream().map(Entity::getID).collect(Collectors.toSet());
+            Set<String> previouslyRenderedEntityIds = new HashSet<>(skinService.getActiveEntitiesID());
+            previouslyRenderedEntityIds.removeAll(currentEntityIds);
 
-                if (skinService != null) {
-                    skinService.removeImages(polygonEntity);
-                }
+            for (String id : previouslyRenderedEntityIds) {
+                skinService.removeImages(id);
             }
         }
 
