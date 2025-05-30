@@ -25,6 +25,7 @@
         <module>CommonEnemy</module>
         <module>Skin</module>
         <module>ScoringSystem</module>
+        <module>ScoreClient</module>
     </modules>
     <properties>
         <java>java</java>

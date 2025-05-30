@@ -29,9 +29,12 @@ public class Game extends Application {
     private final Pane gameWindow = new Pane();
     private ISoundService soundService;
     private IGUISkinService skinService;
+    private IScoringService scoringService;
     private final List<IGamePluginService> gamePluginServices;
     private final List<IEntityProcessingService> entityProcessingServiceList;
     private final List<IPostEntityProcessingService> postEntityProcessingServices;
+    private int newScore;
+    private Text scoreText;
 
     Game(List<IGamePluginService> gamePluginServices, List<IEntityProcessingService> entityProcessingServiceList, List<IPostEntityProcessingService> postEntityProcessingServices) {
         this.gamePluginServices = gamePluginServices;
@@ -43,10 +46,11 @@ public class Game extends Application {
     public void start(Stage window) throws Exception {
         soundService = getSoundService();
         skinService = getSkinService();
+        scoringService = getScoringService();
 
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
-        gameWindow.getChildren().add(text);
+        scoreText = new Text(10, 20, "Destroyed asteroids: "+ newScore);
+        gameWindow.getChildren().add(scoreText);
 
         Scene scene = new Scene(gameWindow);
         scene.setOnKeyPressed(event -> {
@@ -117,6 +121,11 @@ public class Game extends Application {
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
             postEntityProcessorService.process(gameData, world);
         }
+
+        if (scoringService != null) {
+            newScore = scoringService.getScore();
+            scoreText.setText("Destroyed asteroids: "+ newScore);
+        }
     }
 
     private void draw() {
@@ -175,5 +184,9 @@ public class Game extends Application {
 
     public IGUISkinService getSkinService() {
         return ServiceLoader.load(IGUISkinService.class).stream().map(ServiceLoader.Provider::get).findFirst().orElse(null);
+    }
+
+    public IScoringService getScoringService() {
+        return ServiceLoader.load(IScoringService.class).stream().map(ServiceLoader.Provider::get).findFirst().orElse(null);
     }
 }
