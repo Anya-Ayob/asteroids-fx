@@ -13,8 +13,7 @@ public class ScoreClient implements IScoringService {
         try {
             String response = restTemplate.getForObject(pointsURL, String.class);
             return Integer.parseInt(response);
-        } catch (Exception e) {
-            System.err.println("Error getting the score: " + e.getMessage());
+        } catch (RestClientException e) {
             return 0;
         }
     }
@@ -24,7 +23,7 @@ public class ScoreClient implements IScoringService {
         try {
             String url = pointsURL + "/" + String.valueOf(point);
             restTemplate.put(url, null);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             System.err.println("Error sending the score: " + e.getMessage());
         }
     }

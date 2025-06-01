@@ -26,19 +26,14 @@ public class CollisionDetector implements IPostEntityProcessingService {
                 if (entity1.getID().equals(entity2.getID())) {
                     continue;                    
                 }
-
                 // CollisionDetection
                 if (this.collides(entity1, entity2)) {
                     world.removeEntity(entity1);
                     world.removeEntity(entity2);
-                    if (asteroidSplitter != null) {
-                        if (entity1 instanceof Asteroid) {
-                            asteroidSplitter.createSplitAsteroid(entity1, world);
-                        } else if (entity2 instanceof Asteroid) {
-                            asteroidSplitter.createSplitAsteroid(entity2, world);
-                        }
-                    } else {
-                        System.out.println("The service AsteroidSplitter was not found");
+                    if (entity1 instanceof Asteroid && asteroidSplitter != null) {
+                        asteroidSplitter.createSplitAsteroid(entity1, world);
+                    } else if (entity2 instanceof Asteroid && asteroidSplitter != null) {
+                        asteroidSplitter.createSplitAsteroid(entity2, world);
                     }
                 }
             }
